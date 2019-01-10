@@ -11,18 +11,22 @@ class UserCreationForm(forms.ModelForm):
     """A form for creating new users. Includes all the required
     fields, plus a repeated password."""
     password1 = forms.CharField(label='Password', widget=forms.PasswordInput)
-    password2 = forms.CharField(label='Password confirmation', widget=forms.PasswordInput)
+    password2 = forms.CharField(label='Password confirmation', widget=forms.PasswordInput,
+                                help_text="Enter the same password as above, for verification.")
 
     class Meta:
         model = MyUser
-        fields = ('email', 'date_of_birth', 'is_admin')
+        fields = ('email', 'first_name', 'last_name', 'date_of_birth', 'is_admin')
 
     def clean_password2(self):
         # Check that the two password entries match
         password1 = self.cleaned_data.get("password1")
         password2 = self.cleaned_data.get("password2")
         if password1 and password2 and password1 != password2:
-            raise forms.ValidationError("Passwords don't match")
+            raise forms.ValidationError(
+                "Passwords don't match",
+                code='password_mismatch',
+            )
         return password2
 
     def save(self, commit=True):
@@ -37,7 +41,7 @@ class UserCreationForm(forms.ModelForm):
 class UserChangeForm(UserChangeForm):
     class Meta:
         model = MyUser
-        fields = ('email', 'password', 'date_of_birth', 'is_active', 'is_admin')
+        fields = '__all__'
 
     def __init__(self, *args, **kargs):
         super(UserChangeForm, self).__init__(*args, **kargs)
@@ -56,20 +60,22 @@ class UserAdmin(BaseUserAdmin):
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
         ('User Role & Account Management', {'fields': ('is_admin', 'is_active')}),
-        ('Personal info', {'fields': ('date_of_birth',)}),
-
+        ('Personal info', {'fields': ('first_name', 'last_name', 'date_of_birth',)}),
+        ('Important dates', {'fields': ('last_login', 'date_joined')}),
     )
     # add_fieldsets is not a standard ModelAdmin attribute. UserAdmin
     # overrides get_fieldsets to use this attribute when creating a user.
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('email', 'is_admin', 'date_of_birth', 'password1', 'password2')}
+            'fields': (
+                 'email', 'is_admin', 'first_name', 'last_name', 'date_of_birth', 'password1', 'password2')}
          ),
     )
     search_fields = ('email',)
     ordering = ('email',)
     filter_horizontal = ()
+    readonly_fields = ('last_login', 'date_joined',)
 
 
 # Now register the new UserAdmin...
