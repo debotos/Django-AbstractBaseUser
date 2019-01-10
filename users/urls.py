@@ -1,9 +1,9 @@
-from django.contrib import admin
 from django.urls import path
 
-from .views import login, sample_api
+from .views import login, credit_request, screenshot
 
 urlpatterns = [
-    path('login', login),
-    path('sample', sample_api)
+    path('login/', login),
+    path('credit/', credit_request),  # Asking for Credit
+    path('screenshot/', screenshot)  # Making a screenshot so reduce Credit point
 ]

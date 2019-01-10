@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     # Local Apps (project's apps)
-    'users'
+    'users',
+    'credit_request',  # App for requesting Credit or Token
 ]
 
 AUTH_USER_MODEL = 'users.MyUser'
@@ -51,7 +52,7 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated', )
+        'rest_framework.permissions.IsAuthenticated',)
 }
 
 MIDDLEWARE = [
