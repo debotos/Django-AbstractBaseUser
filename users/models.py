@@ -5,7 +5,7 @@ from django.contrib.auth.models import (
 
 
 class MyUserManager(BaseUserManager):
-    def create_user(self, email, date_of_birth, password=None):
+    def create_user(self, email, date_of_birth=None, password=None):
         """
         Creates and saves a User with the given email, date of
         birth and password.
@@ -22,7 +22,7 @@ class MyUserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, date_of_birth, password):
+    def create_superuser(self, email, date_of_birth=None, password=None):
         """
         Creates and saves a superuser with the given email, date of
         birth and password.
@@ -43,14 +43,14 @@ class MyUser(AbstractBaseUser):
         max_length=255,
         unique=True,
     )
-    date_of_birth = models.DateField()
-    is_active = models.BooleanField(default=True)
-    is_admin = models.BooleanField(default=False)
+    date_of_birth = models.DateField(blank=True, null=True)
+    is_active = models.BooleanField(verbose_name='Is Active', default=True, help_text='Uncheck to disable the account')
+    is_admin = models.BooleanField(verbose_name='Is Admin', default=False, help_text='Give admin privileges')
 
     objects = MyUserManager()
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['date_of_birth']
+    REQUIRED_FIELDS = []
 
     def __str__(self):
         return self.email
